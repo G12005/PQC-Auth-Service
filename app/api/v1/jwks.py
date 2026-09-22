@@ -1,6 +1,6 @@
 import base64
 from fastapi import APIRouter
-from app.api.v1.auth import pqc_core
+from app.core.security import pqc_core
 
 router = APIRouter(prefix="/.well-known", tags=["JWKS"])
 

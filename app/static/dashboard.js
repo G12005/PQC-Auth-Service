@@ -1,15 +1,9 @@
 const state = {
   token: sessionStorage.getItem("pqc_access_token"),
-  claims: null,
-  mode: "login" // "login" or "register"
+  claims: null
 };
 
 const $ = (selector) => document.querySelector(selector);
-
-function setMessage(element, message, visible = true) {
-  element.textContent = message;
-  element.hidden = !visible;
-}
 
 function decodeSegment(segment) {
   const normalized = segment.replace(/-/g, "+").replace(/_/g, "/");
@@ -44,34 +38,6 @@ function setBusy(button, busy, label) {
   }
 }
 
-function setAuthMode(mode) {
-  state.mode = mode;
-  setMessage($("#login-error"), "", false);
-  if (mode === "register") {
-    $("#tab-login").classList.remove("active-tab");
-    $("#tab-register").classList.add("active-tab");
-    $("#form-heading").textContent = "Create Account";
-    $("#form-subtext").textContent = "Register new account credentials securely.";
-    $("#submit-text").textContent = "Register User";
-  } else {
-    $("#tab-register").classList.remove("active-tab");
-    $("#tab-login").classList.add("active-tab");
-    $("#form-heading").textContent = "Access Portal";
-    $("#form-subtext").textContent = "Sign in with your account credentials.";
-    $("#submit-text").textContent = "Authenticate";
-  }
-}
-
-function showDashboard() {
-  $("#login-view").hidden = true;
-  $("#dashboard-view").hidden = false;
-  const decoded = decodeToken(state.token);
-  state.claims = decoded.claims;
-  $("#user-name").textContent = decoded.claims.sub || "operator";
-  resetInspectionStates();
-  $(".dashboard-heading").focus({ preventScroll: true });
-}
-
 function resetInspectionStates() {
   $("#verify-status").className = "status-value pending";
   $("#verify-status").textContent = "Awaiting action";
@@ -103,51 +69,11 @@ function updateExpiry(claims) {
   $("#profile-detail").textContent += expired ? " · Expired" : ` · Expires ${date.toLocaleTimeString()}`;
 }
 
-function showLogin() {
-  $("#dashboard-view").hidden = true;
-  $("#login-view").hidden = false;
-  setAuthMode("login");
-  resetInspectionStates();
-}
-
 async function request(url, options = {}) {
   const response = await fetch(url, options);
   const body = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(body.detail || `Request failed (${response.status})`);
   return body;
-}
-
-async function handleAuthSubmit(event) {
-  event.preventDefault();
-  const button = $("#submit-btn");
-  setMessage($("#login-error"), "", false);
-  
-  const isRegister = state.mode === "register";
-  const endpoint = isRegister ? "/auth/register" : "/auth/login";
-  const busyLabel = isRegister ? "Creating account..." : "Authenticating...";
-
-  setBusy(button, true, busyLabel);
-  try {
-    const body = await request(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: $("#username").value.trim(),
-        password: $("#password").value
-      }),
-    });
-    
-    // Store token and switch to Page 2 (Dashboard)
-    state.token = body.access_token;
-    sessionStorage.setItem("pqc_access_token", state.token);
-    showDashboard();
-  } catch (error) {
-    // If login/register fails (e.g. wrong password), clear any old session and remain on Page 1
-    logoutWithoutNavigation();
-    setMessage($("#login-error"), error.message);
-  } finally {
-    setBusy(button, false);
-  }
 }
 
 async function verifyToken(token = state.token, options = {}) {
@@ -229,24 +155,14 @@ function tamperToken() {
   verifyToken(tampered, { tamperTest: true });
 }
 
-function logoutWithoutNavigation() {
+function logout() {
   state.token = null;
   state.claims = null;
   sessionStorage.removeItem("pqc_access_token");
-}
-
-function logout() {
-  logoutWithoutNavigation();
-  $("#login-error").hidden = true;
-  $("#demo-message").textContent = "";
-  $("#demo-message").className = "demo-message";
-  showLogin();
+  window.location.href = "/";
 }
 
 // Event Listeners
-$("#tab-login").addEventListener("click", () => setAuthMode("login"));
-$("#tab-register").addEventListener("click", () => setAuthMode("register"));
-$("#auth-form").addEventListener("submit", handleAuthSubmit);
 $("#verify-button").addEventListener("click", () => verifyToken());
 $("#profile-button").addEventListener("click", revealClaims);
 $("#jwks-button").addEventListener("click", loadJwks);
@@ -254,23 +170,26 @@ $("#tamper-button").addEventListener("click", tamperToken);
 $("#logout-button").addEventListener("click", logout);
 $("#reset-button").addEventListener("click", logout);
 
-// Initialize Page View
-async function initApp() {
-  if (state.token) {
-    try {
-      // Verify stored token with backend on page load before revealing Page 2
-      const body = await request(`/auth/verify?token=${encodeURIComponent(state.token)}`, { method: "POST" });
-      if (body.valid) {
-        showDashboard();
-      } else {
-        logout();
-      }
-    } catch (e) {
+// Initialize Dashboard Page
+async function initDashboard() {
+  if (!state.token) {
+    logout();
+    return;
+  }
+
+  try {
+    const res = await request(`/auth/verify?token=${encodeURIComponent(state.token)}`, { method: "POST" });
+    if (!res.valid) {
       logout();
+      return;
     }
-  } else {
-    showLogin();
+    const decoded = decodeToken(state.token);
+    state.claims = decoded.claims;
+    $("#user-name").textContent = decoded.claims.sub || "operator";
+    resetInspectionStates();
+  } catch (e) {
+    logout();
   }
 }
 
-initApp();
+initDashboard();
