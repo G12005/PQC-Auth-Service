@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#102a43">
-  <title>PQC Auth Service</title>
+  <title>Post-Quantum Authentication Service - Access Portal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,58 +15,55 @@
     <header class="topbar">
       <a class="brand" href="/" aria-label="PQC Auth home">
         <span class="brand-mark" aria-hidden="true">P</span>
-        <span><strong>PQC</strong> AUTH <small>LAB</small></span>
+        <span><strong>PQC</strong> AUTH <small>NIST FIPS 204</small></span>
       </a>
-      <div class="topbar-meta"><span class="live-dot"></span><span>LIVE PROTOTYPE</span><span class="divider"></span><span>ML-DSA-65</span></div>
+      <div class="topbar-meta"><span class="live-dot"></span><span>LIVE DEMO</span><span class="divider"></span><span>ML-DSA-65</span></div>
     </header>
 
     <main>
-      <section id="login-view" class="login-layout view-active">
+      <section class="login-layout view-active">
         <div class="intro-copy">
           <p class="eyebrow">POST-QUANTUM IDENTITY</p>
           <h1>Trust, built for<br><em>what comes next.</em></h1>
-          <p class="lede">A visual proof of concept for authentication signed with post-quantum cryptography.</p>
-          <div class="signal-row"><span class="signal-icon">+</span><span>Cryptographic verification at every step</span></div>
+          <p class="lede">Next-generation authentication engine utilizing NIST ML-DSA-65 lattice-based digital signatures and zero-trust key isolation.</p>
+          <div class="signal-row"><span class="signal-icon">+</span><span>Cryptographic signature verification at every layer</span></div>
         </div>
-        <form id="login-form" class="login-panel">
-          <div class="panel-heading"><span class="step-label">01 / ACCESS</span><span class="lock-icon" aria-hidden="true">⌁</span></div>
-          <h2>Enter the lab</h2>
-          <p class="panel-copy">Use the demo credentials to explore the signed authentication flow.</p>
-          <label for="username">Username</label>
-          <input id="username" name="username" type="text" value="admin" autocomplete="username" required>
+
+        <form id="auth-form" class="login-panel">
+          <div class="panel-heading">
+            <span class="step-label">01 / ACCESS PORTAL</span>
+            <span class="lock-icon" aria-hidden="true">⌁</span>
+          </div>
+
+          <div class="auth-tabs" role="tablist" style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <button id="tab-login" type="button" class="outline-button active-tab" style="flex: 1; padding: 6px 12px; cursor: pointer;">Sign In</button>
+            <button id="tab-register" type="button" class="outline-button" style="flex: 1; padding: 6px 12px; cursor: pointer;">Register</button>
+          </div>
+
+          <h2 id="form-heading">Sign In</h2>
+          <p id="form-subtext" class="panel-copy">Sign in with your account credentials.</p>
+          
+          <label for="username">User ID / Username</label>
+          <input id="username" name="username" type="text" placeholder="user_001" autocomplete="username" required>
+          
           <label for="password">Password</label>
-          <input id="password" name="password" type="password" value="supersecret" autocomplete="current-password" required>
-          <button class="primary-button" type="submit"><span>Authenticate</span><span aria-hidden="true">↗</span></button>
+          <input id="password" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required>
+          
+          <button id="submit-btn" class="primary-button" type="submit">
+            <span id="submit-text">Authenticate</span><span aria-hidden="true">↗</span>
+          </button>
+          
           <p id="login-error" class="form-message error" role="alert" hidden></p>
-          <p class="demo-note">Demo access <code>admin</code> / <code>supersecret</code></p>
+          <p id="demo-note" class="demo-note">Cryptographic Core: <code>NIST ML-DSA-65 Lattice-Based Signatures</code></p>
         </form>
       </section>
-
-      <section id="dashboard-view" class="dashboard-view" hidden>
-        <div class="dashboard-heading" tabindex="-1">
-          <div><p class="eyebrow">AUTHENTICATED SESSION</p><h1>Welcome, <span id="user-name">admin</span>.</h1></div>
-          <button id="logout-button" class="quiet-button" type="button">Sign out <span aria-hidden="true">↗</span></button>
-        </div>
-        <div id="dashboard-alert" class="dashboard-alert" role="status" aria-live="polite"><span class="status-pulse"></span><span id="session-status">Session ready — choose a panel to inspect</span></div>
-        <div class="prototype-banner"><span class="banner-mark">i</span><span><strong>Demo mode</strong> — using the current local backend verification flow. No private keys are exposed in this interface.</span></div>
-
-        <div class="dashboard-grid">
-          <article class="metric-card accent-card"><div class="card-label">SESSION VERIFICATION</div><div id="verify-status" class="status-value pending">Awaiting action</div><p id="verify-detail">Run the backend verification check when ready.</p><button id="verify-button" class="outline-button" type="button">Verify token <span aria-hidden="true">→</span></button></article>
-          <article class="metric-card"><div class="card-label">TOKEN IDENTITY</div><div id="profile-value" class="profile-value masked-value">Hidden</div><p id="profile-detail">Claims stay hidden until you choose to read them.</p><button id="profile-button" class="outline-button" type="button">Read claims <span aria-hidden="true">→</span></button></article>
-          <article class="metric-card"><div class="card-label">PUBLIC KEY DIRECTORY</div><div id="key-status" class="status-value pending">Not inspected</div><p id="key-detail">Load the backend's public verification key on demand.</p><button id="jwks-button" class="outline-button" type="button">Inspect JWKS <span aria-hidden="true">→</span></button></article>
-          <article class="metric-card tamper-card"><div class="card-label">TAMPER TEST</div><div id="tamper-status" class="status-value pending">Not run</div><p id="tamper-detail">Tests an altered copy without changing this session.</p><button id="tamper-button" class="outline-button" type="button">Test altered copy <span aria-hidden="true">→</span></button></article>
-        </div>
-
-        <div class="lower-grid">
-          <article class="data-panel"><div class="panel-title"><span>Token payload</span><span class="panel-index">CLAIMS / 01</span></div><pre id="claims-output">Click “Read claims” to reveal the signed token payload.</pre></article>
-          <article class="data-panel"><div class="panel-title"><span>Public key directory</span><span class="panel-index">JWKS / 02</span></div><pre id="jwks-output">Click “Inspect JWKS” to reveal public key metadata.</pre></article>
-        </div>
-        <div class="demo-tools"><div><p class="eyebrow">DEMO CONTROLS</p><h2>Make the proof visible.</h2><p class="tool-copy">The tamper test submits an altered copy; your real session token stays untouched.</p></div><button id="reset-button" class="quiet-button" type="button">Reset demo</button></div>
-        <p id="demo-message" class="demo-message" role="status" aria-live="polite"></p>
-      </section>
     </main>
-    <footer><span>PQC AUTH SERVICE / 2026</span><span>EXPERIMENTAL SECURITY INTERFACE</span></footer>
+
+    <footer>
+      <span>POST-QUANTUM AUTHENTICATION SERVICE</span>
+      <span>NIST FIPS 204 DEMONSTRATOR</span>
+    </footer>
   </div>
-  <script src="/static/app.js"></script>
+  <script src="/static/login.js"></script>
 </body>
 </html>

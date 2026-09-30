@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -20,4 +19,10 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/")
 async def root():
+    """Page 1: Login & Registration Access Portal"""
     return FileResponse(STATIC_DIR / "index.html")
+
+@app.get("/dashboard")
+async def dashboard():
+    """Page 2: Post-Quantum Cryptography Presentation Dashboard"""
+    return FileResponse(STATIC_DIR / "dashboard.html")

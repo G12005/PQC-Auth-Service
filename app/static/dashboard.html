@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#102a43">
+  <title>Post-Quantum Authentication Service - Session Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/dashboard" aria-label="PQC Auth Dashboard">
+        <span class="brand-mark" aria-hidden="true">P</span>
+        <span><strong>PQC</strong> AUTH <small>NIST FIPS 204</small></span>
+      </a>
+      <div class="topbar-meta"><span class="live-dot"></span><span>LIVE SESSION</span><span class="divider"></span><span>ML-DSA-65</span></div>
+    </header>
+
+    <main>
+      <section id="dashboard-view" class="dashboard-view">
+        <div class="dashboard-heading" tabindex="-1">
+          <div><p class="eyebrow">AUTHENTICATED SESSION</p><h1>Welcome, <span id="user-name">operator</span>.</h1></div>
+          <button id="logout-button" class="quiet-button" type="button">Sign out <span aria-hidden="true">↗</span></button>
+        </div>
+        <div id="dashboard-alert" class="dashboard-alert" role="status" aria-live="polite"><span class="status-pulse"></span><span id="session-status">Session ready — choose a panel to inspect</span></div>
+        <div class="prototype-banner"><span class="banner-mark">i</span><span><strong>Quantum Security Active</strong> — Authenticated with ML-DSA-65. Private keys are securely managed and never exposed.</span></div>
+
+        <div class="dashboard-grid">
+          <article class="metric-card accent-card"><div class="card-label">SESSION VERIFICATION</div><div id="verify-status" class="status-value pending">Awaiting action</div><p id="verify-detail">Run the backend verification check when ready.</p><button id="verify-button" class="outline-button" type="button">Verify token <span aria-hidden="true">→</span></button></article>
+          <article class="metric-card"><div class="card-label">TOKEN IDENTITY</div><div id="profile-value" class="profile-value masked-value">Hidden</div><p id="profile-detail">Claims stay hidden until you choose to read them.</p><button id="profile-button" class="outline-button" type="button">Read claims <span aria-hidden="true">→</span></button></article>
+          <article class="metric-card"><div class="card-label">PUBLIC KEY DIRECTORY</div><div id="key-status" class="status-value pending">Not inspected</div><p id="key-detail">Load the backend's public verification key on demand.</p><button id="jwks-button" class="outline-button" type="button">Inspect JWKS <span aria-hidden="true">→</span></button></article>
+          <article class="metric-card tamper-card"><div class="card-label">TAMPER TEST</div><div id="tamper-status" class="status-value pending">Not run</div><p id="tamper-detail">Tests an altered copy without changing this session.</p><button id="tamper-button" class="outline-button" type="button">Test altered copy <span aria-hidden="true">→</span></button></article>
+        </div>
+
+        <div class="lower-grid">
+          <article class="data-panel"><div class="panel-title"><span>Token payload</span><span class="panel-index">CLAIMS / 01</span></div><pre id="claims-output">Click “Read claims” to reveal the signed token payload.</pre></article>
+          <article class="data-panel"><div class="panel-title"><span>Public key directory</span><span class="panel-index">JWKS / 02</span></div><pre id="jwks-output">Click “Inspect JWKS” to reveal public key metadata.</pre></article>
+        </div>
+        <div class="demo-tools"><div><p class="eyebrow">DEMO CONTROLS</p><h2>Make the proof visible.</h2><p class="tool-copy">The tamper test submits an altered copy; your real session token stays untouched.</p></div><button id="reset-button" class="quiet-button" type="button">Sign Out</button></div>
+        <p id="demo-message" class="demo-message" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <footer>
+      <span>POST-QUANTUM AUTHENTICATION SERVICE</span>
+      <span>NIST FIPS 204 DEMONSTRATOR</span>
+    </footer>
+  </div>
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>
