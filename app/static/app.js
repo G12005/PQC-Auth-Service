@@ -12,7 +12,7 @@ function setMessage(element, message, visible = true) {
 }
 
 function decodeSegment(segment) {
-  const normalized = segment.replace(/-/g, "+").replace(/_/g, "/");
+  const normalized = segment.replaceAll("-", "+").replaceAll("_", "/");
   const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
   return JSON.parse(decodeURIComponent(atob(padded).split("").map((character) => `%${(`00${character.charCodeAt(0).toString(16)}`).slice(-2)}`).join("")));
 }
@@ -31,7 +31,7 @@ function toBase64Url(value) {
   const bytes = new TextEncoder().encode(value);
   let binary = "";
   bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
-  return btoa(binary).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+  return btoa(binary).replaceAll("=", "").replaceAll("+", "-").replaceAll("/", "_");
 }
 
 function setBusy(button, busy, label) {
@@ -111,7 +111,11 @@ function showLogin() {
 }
 
 async function request(url, options = {}) {
-  const response = await fetch(url, options);
+  const target = new URL(url, window.location.origin);
+  if (target.origin !== window.location.origin) {
+    throw new Error("Requests must target this application.");
+  }
+  const response = await fetch(target, options);
   const body = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(body.detail || `Request failed (${response.status})`);
   return body;
@@ -226,7 +230,7 @@ function tamperToken() {
   const tampered = `${decoded.parts[0]}.${tamperedPayload}.${decoded.parts[2]}`;
   $("#demo-message").className = "demo-message";
   $("#demo-message").textContent = "Testing an altered copy. The original token remains in session storage.";
-  verifyToken(tampered, { tamperTest: true });
+  void verifyToken(tampered, { tamperTest: true });
 }
 
 function logoutWithoutNavigation() {
@@ -273,4 +277,4 @@ async function initApp() {
   }
 }
 
-initApp();
+void initApp();

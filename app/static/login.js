@@ -2,6 +2,12 @@ const state = {
   mode: "login" // "login" or "register"
 };
 
+const allowedRequestPaths = new Set([
+  "/auth/login",
+  "/auth/register",
+  "/auth/verify"
+]);
+
 const $ = (selector) => document.querySelector(selector);
 
 function setMessage(element, message, visible = true) {
@@ -38,7 +44,11 @@ function setAuthMode(mode) {
 }
 
 async function request(url, options = {}) {
-  const response = await fetch(url, options);
+  const target = new URL(url, window.location.origin);
+  if (target.origin !== window.location.origin || !allowedRequestPaths.has(target.pathname)) {
+    throw new Error("Requests must target an approved application endpoint.");
+  }
+  const response = await fetch(target, options);
   const body = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(body.detail || `Request failed (${response.status})`);
   return body;
@@ -99,4 +109,4 @@ async function checkExistingSession() {
   }
 }
 
-checkExistingSession();
+void checkExistingSession();
