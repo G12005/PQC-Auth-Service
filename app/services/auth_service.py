@@ -10,6 +10,8 @@ from app.services.google_sheets_service import (
     UserAlreadyExistsError
 )
 
+INVALID_CREDENTIALS_DETAIL = "Invalid username or password"
+
 class AuthService:
     def __init__(self, sheets_service: GoogleSheetsService = None, pqc_signer: PQCSigner = None):
         self.sheets_service = sheets_service or GoogleSheetsService()
@@ -94,7 +96,7 @@ class AuthService:
         if not username or not password:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid username or password"
+                detail=INVALID_CREDENTIALS_DETAIL
             )
 
         try:
@@ -108,14 +110,14 @@ class AuthService:
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid username or password"
+                detail=INVALID_CREDENTIALS_DETAIL
             )
 
         # Verify password hash
         if not verify_password(password, user.hashedPassword):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid username or password"
+                detail=INVALID_CREDENTIALS_DETAIL
             )
 
         # Generate signed PQC token

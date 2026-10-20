@@ -26,7 +26,7 @@
           <div><p class="eyebrow">AUTHENTICATED SESSION</p><h1>Welcome, <span id="user-name">operator</span>.</h1></div>
           <button id="logout-button" class="quiet-button" type="button">Sign out <span aria-hidden="true">↗</span></button>
         </div>
-        <div id="dashboard-alert" class="dashboard-alert" role="status" aria-live="polite"><span class="status-pulse"></span><span id="session-status">Session ready — choose a panel to inspect</span></div>
+        <output id="dashboard-alert" class="dashboard-alert" aria-live="polite"><span class="status-pulse"></span><span id="session-status">Session ready — choose a panel to inspect</span></output>
         <div class="prototype-banner"><span class="banner-mark">i</span><span><strong>Quantum Security Active</strong> — Authenticated with ML-DSA-65. Private keys are securely managed and never exposed.</span></div>
 
         <div class="dashboard-grid">
@@ -50,6 +50,7 @@
       <span>NIST FIPS 204 DEMONSTRATOR</span>
     </footer>
   </div>
+  <script src="/static/shared.js"></script>
   <script src="/static/dashboard.js"></script>
 </body>
 </html>

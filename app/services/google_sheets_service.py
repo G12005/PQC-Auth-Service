@@ -65,8 +65,8 @@ class GoogleSheetsService:
 
                 return True
 
-            except httpx.HTTPError as err:
-                logger.error(f"HTTP connection error to Apps Script: {err}")
+            except httpx.HTTPError:
+                logger.exception("HTTP connection error to Apps Script")
                 raise GoogleSheetsServiceError("Service unavailable: Could not communicate with Google Sheets database")
 
     async def get_user(self, user_id: str) -> Optional[UserRecord]:
@@ -103,8 +103,8 @@ class GoogleSheetsService:
                     hashedPassword=user_data["hashedPassword"],
                     publicKey=user_data.get("publicKey", "")
                 )
-            except httpx.HTTPError as err:
-                logger.error(f"HTTP error fetching user: {err}")
+            except httpx.HTTPError:
+                logger.exception("HTTP error fetching user")
                 raise GoogleSheetsServiceError("Service unavailable: Could not communicate with Google Sheets database")
 
     async def user_exists(self, user_id: str) -> bool:

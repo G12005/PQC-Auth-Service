@@ -1,5 +1,6 @@
+from typing import Annotated
 from fastapi import APIRouter, HTTPException, Depends, status
-from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse, MessageResponse
+from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse
 from app.core.security import pqc_core
 from app.services.auth_service import AuthService
 from app.api.deps import get_auth_service
@@ -9,7 +10,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 async def register(
     req: RegisterRequest,
-    auth_service: AuthService = Depends(get_auth_service)
+    auth_service: Annotated[AuthService, Depends(get_auth_service)]
 ):
     """
     Register a new user:
@@ -22,7 +23,7 @@ async def register(
 @router.post("/login", response_model=TokenResponse)
 async def login(
     credentials: LoginRequest,
-    auth_service: AuthService = Depends(get_auth_service)
+    auth_service: Annotated[AuthService, Depends(get_auth_service)]
 ):
     """
     Authenticate user against stored credentials in Google Sheets via Apps Script.

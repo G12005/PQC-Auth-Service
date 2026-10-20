@@ -2,27 +2,12 @@ const state = {
   mode: "login" // "login" or "register"
 };
 
-const allowedRequestPaths = new Set([
-  "/auth/login",
-  "/auth/register",
-  "/auth/verify"
-]);
-
-const $ = (selector) => document.querySelector(selector);
+const { $, setBusy, createRequest } = window.PqcAuth;
+const request = createRequest(new Set(["/auth/login", "/auth/register", "/auth/verify"]));
 
 function setMessage(element, message, visible = true) {
   element.textContent = message;
   element.hidden = !visible;
-}
-
-function setBusy(button, busy, label) {
-  button.disabled = busy;
-  if (busy) {
-    button.dataset.originalLabel = button.innerHTML;
-    button.innerHTML = `<span>${label}</span>`;
-  } else if (button.dataset.originalLabel) {
-    button.innerHTML = button.dataset.originalLabel;
-  }
 }
 
 function setAuthMode(mode) {
@@ -41,17 +26,6 @@ function setAuthMode(mode) {
     $("#form-subtext").textContent = "Sign in with your account credentials.";
     $("#submit-text").textContent = "Authenticate";
   }
-}
-
-async function request(url, options = {}) {
-  const target = new URL(url, window.location.origin);
-  if (target.origin !== window.location.origin || !allowedRequestPaths.has(target.pathname)) {
-    throw new Error("Requests must target an approved application endpoint.");
-  }
-  const response = await fetch(target, options);
-  const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.detail || `Request failed (${response.status})`);
-  return body;
 }
 
 async function handleAuthSubmit(event) {

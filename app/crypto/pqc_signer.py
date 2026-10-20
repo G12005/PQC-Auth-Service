@@ -5,11 +5,11 @@ import hashlib
 
 # Check and import dilithium_py
 try:
-    from dilithium_py.dilithium import Dilithium3
+    from dilithium_py.dilithium import Dilithium3  # pyright: ignore[reportMissingImports]
     USE_DILITHIUM_LIB = True
 except ImportError:
     try:
-        from dilithium import Dilithium3
+        from dilithium import Dilithium3  # pyright: ignore[reportMissingImports]
         USE_DILITHIUM_LIB = True
     except ImportError:
         USE_DILITHIUM_LIB = False
