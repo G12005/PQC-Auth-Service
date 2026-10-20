@@ -41,7 +41,7 @@
           <article class="data-panel"><div class="panel-title"><span>Public key directory</span><span class="panel-index">JWKS / 02</span></div><pre id="jwks-output">Click “Inspect JWKS” to reveal public key metadata.</pre></article>
         </div>
         <div class="demo-tools"><div><p class="eyebrow">DEMO CONTROLS</p><h2>Make the proof visible.</h2><p class="tool-copy">The tamper test submits an altered copy; your real session token stays untouched.</p></div><button id="reset-button" class="quiet-button" type="button">Sign Out</button></div>
-        <p id="demo-message" class="demo-message" role="status" aria-live="polite"></p>
+        <output id="demo-message" class="demo-message" aria-live="polite"></output>
       </section>
     </main>
 
@@ -51,6 +51,6 @@
     </footer>
   </div>
   <script src="/static/shared.js"></script>
-  <script src="/static/dashboard.js"></script>
+  <script type="module" src="/static/dashboard.js"></script>
 </body>
 </html>

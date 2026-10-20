@@ -123,4 +123,4 @@ async function initDashboard() {
   }
 }
 
-void initDashboard();
+await initDashboard();

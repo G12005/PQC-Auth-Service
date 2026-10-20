@@ -24,7 +24,7 @@
   function toBase64Url(value) {
     const bytes = new TextEncoder().encode(value);
     let binary = "";
-    bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+    bytes.forEach((byte) => { binary += String.fromCodePoint(byte); });
     return btoa(binary).replaceAll("=", "").replaceAll("+", "-").replaceAll("/", "_");
   }
 

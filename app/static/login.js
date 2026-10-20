@@ -83,4 +83,4 @@ async function checkExistingSession() {
   }
 }
 
-void checkExistingSession();
+await checkExistingSession();
